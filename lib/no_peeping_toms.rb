@@ -28,6 +28,7 @@ module NoPeepingToms
       # StateMachine does and then redirect it back to NoPeepingToms
       if !@update_with_multiple_args_added && name.to_s == "update_without_multiple_args"
         @update_with_multiple_args_added = true
+        alias_method :update_without_neighborhood_watch, :update_with_multiple_args
         alias_method :update_with_multiple_args, :update_with_neighborhood_watch
       end
     end
