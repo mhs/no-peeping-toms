@@ -20,6 +20,18 @@ module NoPeepingToms
   end
   
   module ClassMethods
+    def method_added(name)
+      super
+      
+      # The StateMachine 0.8.0 gem overrides the default #update method for observers
+      # which means NoPeepingToms functionality gets ignored. This is to catch what
+      # StateMachine does and then redirect it back to NoPeepingToms
+      if !@update_with_multiple_args_added && name.to_s == "update_without_multiple_args"
+        @update_with_multiple_args_added = true
+        alias_method :update_with_multiple_args, :update_with_neighborhood_watch
+      end
+    end
+    
     def with_observers(*observer_syms)
       self.peeping_toms = Array(observer_syms).map do |o| 
         o.respond_to?(:instance) ? o.instance : o.to_s.classify.constantize.instance
